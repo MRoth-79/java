@@ -1,19 +1,21 @@
 pipeline {
     agent any
     environment {
-        DOCKER_IMAGE = 'berezovsky8/helloworld-app'
+        // Define your Docker image name and tag
+        DOCKER_IMAGE = 'berezovsky8/devops-python-app'
         DOCKER_TAG = 'latest'
     }
     stages {
         stage('Checkout Code') {
             steps {
-                checkout scm
+                // Clone the specific repository
+                git url: 'https://github.com/berezovsky13/python.git', branch: 'main'
             }
         }
         stage('Docker Build & Tag') {
             steps {
                 script {
-                    // Build the Docker image from the Dockerfile in the repo
+                    // Build and tag the Docker image
                     dockerImage = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
             }
@@ -22,7 +24,7 @@ pipeline {
             steps {
                 script {
                     // Log in to Docker Hub and push the image
-                    docker.withRegistry('https://index.docker.io/v1/', 'your-dockerhub-credentials') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
                         dockerImage.push()
                     }
                 }
@@ -31,17 +33,16 @@ pipeline {
         stage('Docker Run') {
             steps {
                 script {
-                    // Run the container. This will execute the Java program,
-                    // which prints "Hello, World!" to the console.
-                    sh "docker run  ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    // Run the container (adjust options as needed)
+                    sh "docker run -d --name devops-python-app-container ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
     }
     post {
         always {
-            // Optional cleanup if needed
-            echo "Pipeline complete."
+            // Optionally clean up: stop the container if it's still running
+            sh "docker stop devops-python-app-container || true"
         }
     }
 }
