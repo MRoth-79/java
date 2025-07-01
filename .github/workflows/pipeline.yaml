@@ -1,4 +1,4 @@
-name: Build, Push, and Run Docker Image 
+name: Build, Push, and Run Docker Image
 
 on:
   push:
@@ -8,10 +8,6 @@ on:
 jobs:
   build-push-run:
     runs-on: ubuntu-latest
-
-    env:
-      IMAGE_NAME: mroth79/devops-python-app
-      IMAGE_TAG: latest
 
     steps:
       - name: Checkout Repository
@@ -24,13 +20,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
-        run:  |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/helloworld-app:latest .
 
       - name: Push Docker Image to Docker Hub
-        run: |
-          docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/helloworld-app:latest
+
       - name: Run Docker Container
-        run: |
-          docker run -d --name java-app-container ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+        run: docker run  ${{ secrets.DOCKER_USERNAME }}/helloworld-app:latest
