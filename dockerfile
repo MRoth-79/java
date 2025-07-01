@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy your application's jar file into the container
 # Replace 'your-app.jar' with the name of your jar file
-COPY target/your-app.jar app.jar
+COPY target/hello-sonar-1.0-SNAPSHOT.jar app.jar
 
 # Expose the port your app runs on (adjust if needed)
 EXPOSE 8080
